@@ -40,6 +40,9 @@ group :development, :test do
   gem 'dotenv-rails'
   gem 'bcrypt', '~> 3.1.7'
 gem 'jwt'
+gem "graphql"
+gem 'graphiql-rails', '~> 1.8'
+
 
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
 

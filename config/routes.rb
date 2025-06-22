@@ -1,9 +1,18 @@
 Rails.application.routes.draw do
-  # Health check route
+  post "/graphql", to: "graphql#execute"
+
+  # Health check
   get "up" => "rails/health#show", as: :rails_health_check
 
-  # Users routes, only create for now
+  # Users
   resources :users, only: [:create]
 
-  # You can add other routes here later
+  # Auth
+  post '/login', to: 'auth#login'
+  delete '/logout', to: 'auth#logout'
+
+  # Enable GraphiQL in development only
+  if Rails.env.development?
+    mount GraphiQL::Rails::Engine, at: "/graphiql", graphql_path: "/graphql"
+  end
 end

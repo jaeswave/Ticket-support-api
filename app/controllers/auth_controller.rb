@@ -1,15 +1,24 @@
+# app/controllers/auth_controller.rb
 class AuthController < ApplicationController
-    SECRET_KEY = "supersecret123" 
-  
-    def login
-      user = User.find_by(email: params[:email])
-      if user&.authenticate(params[:password])
-        payload = { user_id: user.id }
-        token = JWT.encode(payload, SECRET_KEY, 'HS256')
-        render json: { token: token }
-      else
-        render json: { error: 'Invalid credentials' }, status: :unauthorized
+  def login
+    user = User.find_by(email: params[:email], role: params[:role])
+
+    # Authentication check
+    if user&.authenticate(params[:password])
+      # Special check for agents
+      if params[:role] == "agent" && user.invite_code != params[:invite_code]
+        return render json: { error: "Invalid invite code" }, status: :unauthorized
       end
+
+      # Create token using JwtService
+      token = JwtService.encode(
+        user_id: user.id,
+        role: user.role
+      )
+
+      render json: { token: token }, status: :ok
+    else
+      render json: { error: "Invalid credentials" }, status: :unauthorized
     end
   end
-  
+end
