@@ -75,6 +75,18 @@ Rails.application.configure do
   # Only use :id for inspections in production.
   config.active_record.attributes_for_inspect = [ :id ]
 
+
+  config.action_mailer.delivery_method = :smtp
+config.action_mailer.smtp_settings = {
+  address:              'smtp.elasticemail.com',
+  port:                 2525,
+  user_name:            ENV['ELASTIC_EMAIL_SMTP_USER'],
+  password:             ENV['ELASTIC_EMAIL_SMTP_PASS'],
+  authentication:       :login,
+  enable_starttls_auto: true
+}
+
+
   # Enable DNS rebinding protection and other `Host` header attacks.
   # config.hosts = [
   #   "example.com",     # Allow requests from example.com

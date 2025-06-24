@@ -1,59 +1,68 @@
+# app/controllers/graphql_controller.rb
 class GraphqlController < ApplicationController
+  include Authenticable
+
   def execute
-    variables = prepare_variables(params[:variables])
-    query = params[:query]
-    operation_name = params[:operationName]
-    Rails.logger.debug("Raw params: #{params.inspect}")
-
-    
-    context = {
-      current_user: current_user
-    }
-
-    result = TixSupportSchema.execute(
-      query,
-      variables: variables,
-      context: context,
-      operation_name: operation_name
-    )
-
+    context = build_graphql_context
+    result = execute_query(context)
     render json: result
   rescue StandardError => e
-    raise e unless Rails.env.development?
-    handle_error_in_development(e)
+    handle_error(e)
   end
 
   private
 
-  def current_user
-    return nil unless request.headers['Authorization']
+  def build_graphql_context
+    {
+      current_user: current_user,
+      auth_error: auth_error
+    }
+  end
 
-    token = request.headers['Authorization'].split(' ').last
-    decoded = JWT.decode(token, JWT_SECRET)[0]
-    User.find_by(id: decoded["user_id"])
-  rescue
+  def execute_query(context)
+    TixSupportSchema.execute(
+      params[:query],
+      variables: prepare_variables(params[:variables]),
+      context: context,
+      operation_name: params[:operationName]
+    )
+  end
+
+  def auth_error
+    return unless protected_operation?
+    return "Missing token" unless request.headers['Authorization']
+    
+    payload = JwtService.decode(request.headers['Authorization'].split(' ').last)
+    return "Invalid token" unless payload
+    return "User not found" unless User.exists?(payload[:user_id])
+    
     nil
+  end
+
+  def protected_operation?
+    query = params[:query].to_s
+    !query.include?("login") && !query.include?("publicQuery")
   end
 
   def prepare_variables(variables_param)
     case variables_param
-    when String
-      variables_param.present? ? JSON.parse(variables_param) : {}
-    when Hash
-      variables_param
-    when ActionController::Parameters
-      variables_param.to_unsafe_hash
-    when nil
-      {}
-    else
-      raise ArgumentError, "Unexpected parameter: #{variables_param}"
+    when String then variables_param.present? ? JSON.parse(variables_param) : {}
+    when Hash then variables_param
+    when ActionController::Parameters then variables_param.to_unsafe_hash
+    when nil then {}
+    else raise ArgumentError, "Unexpected parameter: #{variables_param}"
     end
   end
 
-  def handle_error_in_development(e)
-    logger.error e.message
-    logger.error e.backtrace.join("\n")
-
-    render json: { errors: [{ message: e.message, backtrace: e.backtrace }], data: {} }, status: 500
+  def handle_error(error)
+    raise error unless Rails.env.development?
+    
+    logger.error error.message
+    logger.error error.backtrace.join("\n")
+    
+    render json: { 
+      errors: [{ message: error.message, backtrace: error.backtrace }], 
+      data: {} 
+    }, status: 500
   end
 end

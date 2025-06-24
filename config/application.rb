@@ -19,7 +19,6 @@ module TixSupport
     ]
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.0
-    config.autoload_paths << "#{Rails.root}/app/services"
 
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
@@ -28,6 +27,8 @@ module TixSupport
 
     # Configuration for the application, engines, and railties goes here.
     #
+    # config/application.rb
+config.autoload_paths += Dir["#{config.root}/app/graphql/queries"]
     # These settings can be overridden in specific environments using the files
     # in config/environments, which are processed later.
     #

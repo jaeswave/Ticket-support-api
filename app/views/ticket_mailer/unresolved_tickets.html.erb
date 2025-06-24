@@ -1,0 +1,12 @@
+<!-- app/views/ticket_mailer/unresolved_tickets.html.erb -->
+<h1>Hello <%= @agent.email %>,</h1>
+
+<p>You have the following unresolved tickets:</p>
+
+<ul>
+  <% @tickets.each do |ticket| %>
+    <li><strong><%= ticket.title %></strong></li>
+  <% end %>
+</ul>
+
+<p>Please attend to them as soon as possible.</p>

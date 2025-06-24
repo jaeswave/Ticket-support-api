@@ -5,7 +5,7 @@ class CreateTickets < ActiveRecord::Migration[8.0]
       t.string :status null: false
       t.string :resolved_at null: true
       t.references :customer, null: false, foreign_key: { to_table: :users }
-      t.references :agent, null: false, foreign_key: { to_table: :users }
+      t.references :agent, null: true, foreign_key: { to_table: :users }
 
 
 

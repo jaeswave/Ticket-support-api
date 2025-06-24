@@ -1,4 +1,6 @@
-# app/controllers/auth_controller.rb
+require Rails.root.join('app/services/jwt_service')
+
+
 class AuthController < ApplicationController
   def login
     user = User.find_by(email: params[:email], role: params[:role])

@@ -18,6 +18,27 @@ module Types
       ids.map { |id| context.schema.object_from_id(id, context) }
     end
 
+    # Add your tickets query here
+    # field :tickets, [Types::TicketType], null: false,
+    #       resolver: Queries::Tickets,
+    #       description: "Fetch tickets. Agents see all tickets, customers see only their own."
+    field :tickets, [Types::TicketType], null: false,
+      description: "Fetch tickets. Agents see all tickets, customers see only their own."
+
+def tickets
+  user = context[:current_user]
+
+  if user.nil?
+    raise GraphQL::ExecutionError, "Authentication required"
+  end
+
+  if user.role == "agent"
+    Ticket.all
+  else
+    Ticket.where(customer_id: user.id)
+  end
+end
+
     # Add root-level fields here.
     # They will be entry points for queries on your schema.
 

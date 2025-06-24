@@ -1,10 +1,20 @@
-# frozen_string_literal: true
-
 module Mutations
-  class BaseMutation < GraphQL::Schema::RelayClassicMutation
-    argument_class Types::BaseArgument
-    field_class Types::BaseField
-    input_object_class Types::BaseInputObject
-    object_class Types::BaseObject
+  class BaseMutation < GraphQL::Schema::Mutation
+    # Helper to get the current user
+    def current_user
+      context[:current_user]
+    end
+
+    # Rule: "You must be logged in to do this!"
+    def authenticate!
+      return if current_user # Good, they're logged in!
+
+      # If there's an auth error (from the controller), show it
+      if context[:auth_error]
+        raise GraphQL::ExecutionError, context[:auth_error]
+      else
+        raise GraphQL::ExecutionError, "Authentication required"
+      end
+    end
   end
 end
