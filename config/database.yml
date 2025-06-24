@@ -86,6 +86,7 @@ test:
 production:
   primary: &primary_production
     <<: *default
+    url: <%= ENV["DATABASE_URL"] %>
     database: tix_support_production
     username: tix_support
     password: <%= ENV["TIX_SUPPORT_DATABASE_PASSWORD"] %>
