@@ -42,7 +42,7 @@ config.autoload_paths += Dir["#{config.root}/app/graphql/queries"]
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
     # Completely disable assets
-config.assets.enabled = false
-config.assets.compile = false
+# config.assets.enabled = false
+# config.assets.compile = false
   end
 end
