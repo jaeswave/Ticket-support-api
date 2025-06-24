@@ -51,6 +51,7 @@ gem 'graphiql-rails', '~> 1.8'
   gem 'whenever', require: false
 
 
+
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
 end

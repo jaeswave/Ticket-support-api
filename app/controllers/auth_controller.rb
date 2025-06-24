@@ -18,8 +18,11 @@ class AuthController < ApplicationController
         role: user.role
       )
 
-      render json: { token: token }, status: :ok
-    else
+          # Set token in the Authorization header (standard for JWT)
+      response.headers['Authorization'] = "Bearer #{token}"
+
+      render json: { message: "Welcome" }, status: :ok
+        else
       render json: { error: "Invalid credentials" }, status: :unauthorized
     end
   end
