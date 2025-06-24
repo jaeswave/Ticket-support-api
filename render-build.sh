@@ -1,10 +1,5 @@
 #!/bin/bash
-# Disable asset pipeline completely
-export DISABLE_ASSET_COMPILATION=true
-
-# Install gems
-bundle config set without 'development test'
-bundle install
-
-# Only add this if using a database:
-# bundle exec rake db:migrate
+set -e
+# Clean install with no cache
+bundle config set force_ruby_platform true
+bundle install --without development test --path vendor/bundle --clean
