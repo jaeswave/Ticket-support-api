@@ -41,6 +41,8 @@ config.autoload_paths += Dir["#{config.root}/app/graphql/queries"]
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
-    config.assets.enabled = false
+    # Completely disable assets
+config.assets.enabled = false
+config.assets.compile = false
   end
 end
