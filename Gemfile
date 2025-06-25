@@ -4,6 +4,11 @@ source "https://rubygems.org"
 gem "rails", "~> 8.0.2"
 # Use postgresql as the database for Active Record
 gem "pg", "~> 1.1"
+gem 'bcrypt', '~> 3.1.7'
+gem 'jwt'
+gem "graphql"
+gem 'graphiql-rails', '~> 1.8'
+
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
@@ -38,10 +43,7 @@ gem "thruster", require: false
 
 
 group :development, :test do
-  gem 'bcrypt', '~> 3.1.7'
-gem 'jwt'
-gem "graphql"
-gem 'graphiql-rails', '~> 1.8'
+
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem 'dotenv-rails'
 
