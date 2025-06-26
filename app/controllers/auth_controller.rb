@@ -26,4 +26,14 @@ class AuthController < ApplicationController
       render json: { error: "Invalid credentials" }, status: :unauthorized
     end
   end
+
+
+  def me
+    render json: {
+      name: current_user.name,
+      email: current_user.email,
+      role: current_user.role
+    }
+  end
+end
 end

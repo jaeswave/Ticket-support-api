@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   post '/login', to: 'auth#login'
   delete '/logout', to: 'auth#logout'
   get 'tickets/export_csv', to: 'tickets#export_csv'
+  get "/me", to: "auth#me"
 
 
   # Enable GraphiQL in development only
