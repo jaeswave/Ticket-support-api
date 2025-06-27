@@ -1,30 +1,3 @@
-# module Mutations
-#   class CreateComment < BaseMutation
-#     argument :ticket_id, ID, required: true
-#     argument :content, String, required: true
-
-#     # Matching CreateTicket's output style
-#     field :comment, Types::CommentType, null: false  # Non-null like ticket
-#     field :errors, [String], null: true              # Optional errors
-
-#     def resolve(ticket_id:, content:)
-#       authenticate! #
-
-#       ticket = Ticket.find(ticket_id)
-#       comment = ticket.comments.create!(
-#         content: content,
-#         user: current_user
-#       )
-
-#       { comment: comment }  # Simple return like CreateTicket
-#     rescue ActiveRecord::RecordInvalid => e
-#       { comment: nil, errors: [e.message] }  # Error handling if needed
-#     end
-#   end
-# end
-
-
-
 module Mutations
   class CreateComment < BaseMutation
     argument :ticket_id, ID, required: true

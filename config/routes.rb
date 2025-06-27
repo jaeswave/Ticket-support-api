@@ -10,7 +10,7 @@ Rails.application.routes.draw do
   # Auth
   post '/login', to: 'auth#login'
   delete '/logout', to: 'auth#logout'
-  get 'tickets/export_csv', to: 'tickets#export_csv'
+  get '/tickets/export_csv', to: 'tickets#export_csv'
   get "/me", to: "auth#me"
 
 
