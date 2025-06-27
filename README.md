@@ -1,163 +1,189 @@
-Ticket Support Backend | Ruby on Rails + GraphQL
+# 🎟️ Support Ticket System – Backend (Ruby on Rails + GraphQL)
 
-This is the backend API for a customer support ticketing system. It allows customers to create support requests, add comments, and track ticket statuses. Support agents can respond, export reports, and receive email reminders.
-
----
-
-## Live App URL
-
-**GraphQL Endpoint**  
-🔗 https://ticket-support-api.onrender.com/graphql
+This is the backend service for the Support Ticket System, designed to handle customer support requests and interactions between customers and support agents. Built with Ruby on Rails, PostgreSQL, GraphQL, and Devise.
 
 ---
 
-## Tech Stack
+## 📌 Table of Contents
 
-- **Framework**: Ruby on Rails 8
-- **Language**: Ruby 3.2
-- **API**: GraphQL
-- **Database**: PostgreSQL
-- **Authentication**: JWT
-- **Background Jobs**: Whenever
-- **Uploads**: Active Storage - images/PDFs
-- **Env Management**: dotenv-rails
+- [Setup Instructions](#setup-instructions)
+- [API Endpoint](#api-endpoint)
+- [Database Schema](#database-schema)
+- [GraphQL Schema](#graphql-schema)
+- [Authentication](#authentication)
+- [Core Features](#core-features)
+- [Testing](#testing)
+- [Deployment](#deployment)
 
 ---
 
-## Local Setup Instructions
+## 🛠️ Setup Instructions
 
-### 1. Clone Repo
+### Prerequisites
+- Ruby 3.2
+- Rails 7.x
+- PostgreSQL
+- Node.js (for ActiveStorage and JS support)
+
+### Installation
 
 ```bash
-git clone https://github.com/your-username/ticket-support-backend.git
-cd ticket-support-backend
-
-Install Dependencies
+git clone https://github.com/jaeswave/Ticket-support-api.git
+cd support-ticket-api
 bundle install
+rails db:create db:migrate
+rails s
 
-
- Configure Database
- rails db:setup
-
-
-
-Environment Variables
-DB_USERNAME=
-DB_PASSWORD=
-JWT_SECRET_KEY=
-ELASTIC_EMAIL_SMTP_USER=
-ELASTIC_EMAIL_SMTP_PASS=
-
-
-Start the App
-rails server
+ API Endpoint
+GraphQL Endpoint:
+post - http://localhost:3000/graphql
+post - http://localhost:3000/users
+get - http://localhost:3000/me
+get - http://localhost:3000/ticket/export_csv
 
 
 
- Authentication
- Authorization: Bearer your_jwt_token
+🧩 Database Schema
+Key tables:
 
+users: roles (customer, agent)
 
-sign up and login Endpoint
-POST /users
-Payload:
-   user:
-    "email": "user@example.com",
-    "password": "your_password"
-    role:customer
+tickets: linked to users
 
+comments: replies by customers and agents
 
-   agent Payload:
-   user:
-    "email": "user@example.com",
-    "password": "your_password"
-    role: agent
-    invite_code: 123456
+active_storage_*: for file uploads
+
+See /db/schema.rb for full structure.
 
 
 
-POST /login
+🧬 GraphQL Schema
+The GraphQL schema supports:
 
-Payload:
-   user:
-    "email": "user@example.com",
-    "password": "your_password"
+Ticket creation & updates
 
+Commenting logic with role-based permissions
 
- DELETE /logout
+File uploads via base64 or signed URL
 
+Queries to fetch tickets, comments, and users
 
-GET /tickets#export_csv
-GET /tickets/export_csv
-Headers:
-  Authorization: Bearer <YOUR_JWT_TOKEN>
-  Accept: text/csv
+Schema is auto-dumped to schema.graphql
 
-
-
-
-
-  GraphQL Usage
-
-  Ticket Creation (Customer)
-  mutation {
-  createTicket(input: {
-    title: "Login not working",
-    description: "Can't access dashboard",
-    file: null
-  }) {
-    ticket {
-      id
-      title
-      status
+create comment 
+  query: `
+    mutation CreateComment($ticketId: ID!, $content: String!) {
+      createComment(ticketId: $ticketId, content: $content) {
+        comment {
+          id
+          content
+          createdAt
+          user {
+            id
+          }
+        }
+        errors
+      }
     }
-  }
-}
+  `
+
+
+
+  create ticket 
+
+
+     mutation CreateTicket($title: String!) {
+      createTicket(title: $title) {
+        ticket {
+          id
+          title
+          status
+        }
+      
+    
+  `
+
+  assign ticket 
+
+   query: `
+          mutation AssignTicket($ticketId: ID!) {
+            assignTicket(ticketId: $ticketId) {
+              ticket {
+                id
+                agent {
+                  id
+                }
+              }
+              errors
+            }
+          }
+        `,
+
+
+        get all ticket based on roles 
+         query: `
+          query Tickets {
+            tickets {
+              id
+              title
+              status
+              comments {
+                id
+                content
+              }
+            }
+          }
 
 
 
 
-Add Comment (Customer/Agent)
-mutation {
-  addComment(input: {
-    ticketId: 1,
-    body: "Please reset your password and try again."
-  }) {
-    comment {
-      id
-      body
-      createdAt
-    }
-  }
-}
- Known Issues
-Render cold starts can delay response on first load.
+🔐 Authentication
+Using devise for email/password authentication.
 
-File uploads require S3 or third-party config in production.
+Each user has a role (customer or agent) which controls access to m✨ Core Features
+For Customers
+Sign up / login
 
+Create tickets
 
+View own tickets
 
- If More Time Was Available
-Add admin dashboard for agents.
+Add comment only after agent replies
 
-Set up cloud storage (e.g. S3) for real file handling.
+Upload images or PDFs with ticket
 
-Add Pundit for fine-grained authorization rules.
+For Agents
+View all tickets
 
-Improve GraphQL query performance and add pagination.
+Respond to tickets
+
+Export closed tickets from the past month as CSV
+
+Receive daily email reminders of open tickets
 
 
 
- Included Files
-/app/graphql/: GraphQL types, mutations, and queries.
+✅ Testing
+Using RSpec and FactoryBot.
 
-/app/models/: User, Ticket, Comment models.
+Run tests:
+bundle exec rspec
 
-/db/migrate/: All schema and migration files.
+Test coverage includes:
+
+User authentication
+
+Ticket creation and status
+
+Comment permission logic
+
+GraphQL API endpoints
 
 
 
 
 
 
-```
+
+
