@@ -21,7 +21,7 @@
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
     allow do
-      origins 'https://support-ui.onrender.com'  # 👈 allow your frontend's dev URL
+      origins 'https://support-ui.onrender.com','http://localhost:5173'
   
       resource '*',
         headers: :any,
